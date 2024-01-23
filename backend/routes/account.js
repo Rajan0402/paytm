@@ -35,12 +35,12 @@ router.route('/transfer')
       }
 
       const amountDeducted = await Account.findOneAndUpdate({ userId: req.userId }, { $inc: { balance: -parsedData.data.amount } }).session(session)
-      const amountCredited = await Account.findOneAndUpdate({ userId: parsedData.data.to }, { $inc: { balance: parsedData.data.amount } }).session(session)
+      const amountCredited = await Account.findOneAndUpdate({ userId: parsedData.data }, { $inc: { balance: parsedData.data.amount } }).session(session)
 
       await session.commitTransaction();
       res.json({ message: 'Transfer successful' })
     } catch (err) {
-
+      res.json({ Error: err })
     }
 
   })
