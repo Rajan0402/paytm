@@ -54,5 +54,6 @@ const signInBody = zod.object({
 })
 
 const User = mongoose.model("User", UserSchema)
+const Account = mongoose.model("Account", AccountSchema)
 
-module.exports = { User, updateBody, signInBody, signUpBody }
+module.exports = { User, Account, updateBody, signInBody, signUpBody }
