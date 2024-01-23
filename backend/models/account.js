@@ -2,27 +2,20 @@ const mongoose = require('mongoose')
 const zod = require('zod')
 
 const AccountSchema = new mongoose.Schema({
-  userId: [{
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true
-  }],
+  },
   balance: {
-    type: Float64Array,
+    type: Number,
     required: true
   },
 })
 
 const transferBody = zod.object({
-  to: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true
-  },
-  amount: {
-    type: Float64Array,
-    required: true
-  }
+  to: zod.string(),
+  amount: zod.number()
 })
 
 const Account = mongoose.model('Account', AccountSchema)

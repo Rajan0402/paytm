@@ -23,26 +23,24 @@ router.route('/transfer')
       if (!parsedData.success) res.json({ Error: parsedData.error })
 
       const senderAccountDetails = await Account.findOne({ userId: req.userId }).session(session)
-      if (senderAccountDetails.balance < parsedData.amount) {
+      if (senderAccountDetails.balance < parsedData.data.amount) {
         session.abortTransaction()
         res.status(400).json({ message: "Insufficient balance" })
       }
-
       const receiverAccount = await Account.findOne({ userId: parsedData.data.to }).session(session)
       if (!receiverAccount) {
         session.abortTransaction()
         res.status(400).json({ message: "Invalid account" })
       }
 
-      const amountDeducted = await Account.findOneAndUpdate({ userId: req.userId }, { $inc: { balance: -parsedData.data.amount } }).session(session)
-      const amountCredited = await Account.findOneAndUpdate({ userId: parsedData.data }, { $inc: { balance: parsedData.data.amount } }).session(session)
+      await Account.updateOne({ userId: req.userId }, { $inc: { balance: -parsedData.data.amount } }).session(session)
+      await Account.updateOne({ userId: parsedData.data.to }, { $inc: { balance: parsedData.data.amount } }).session(session)
 
       await session.commitTransaction();
       res.json({ message: 'Transfer successful' })
     } catch (err) {
       res.json({ Error: err })
     }
-
   })
 
 module.exports = router
